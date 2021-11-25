@@ -1,5 +1,6 @@
 import React from 'react';
 import {StyleSheet, Platform, StatusBar,View,Text} from 'react-native';
+import NetInfo from "@react-native-community/netinfo";
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 
 
@@ -7,8 +8,30 @@ import {getStatusBarHeight} from 'react-native-status-bar-height';
 export default class Status extends React.Component{
 
    state={
-     info:'none',
+     info:'',
    };
+
+   handleChange= (status) => {
+      const info = status.isConnected ? 'yes' : 'none';
+      this.setState({info});
+   }
+
+   async componentDidMount(){
+      this.subscription = NetInfo.addEventListener(this.handleChange)
+
+       NetInfo.fetch().then(status => {
+           const info = status.isConnected ? 'yes' : 'none';
+           console.log('NetworkStatus',"Status="+status.isConnected)
+           this.setState({info});
+       });
+
+
+    // setTimeout(() => this.handleChange('none'),10000);
+   }
+
+   componentWillUnmount(){
+     this.subscription();
+   }
 
 
    render(){
@@ -50,7 +73,7 @@ export default class Status extends React.Component{
 const statusHeight=(Platform.OS === 'ios' ? getStatusBarHeight() : 0);
 
 const styles = StyleSheet.create({
-  
+
   status:{
     zIndex:1,
     height:statusHeight,
