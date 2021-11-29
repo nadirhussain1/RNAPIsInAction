@@ -32,7 +32,7 @@ export default class MessageList extends React.Component{
   };
 
   renderMessageBody = ({type, text, uri, coordinate}) => {
-     console.log("Type="+type);
+  
     switch(type){
       case 'text':
         return this.renderTextMessage(text)
