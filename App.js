@@ -1,13 +1,35 @@
 import React from 'react';
 import { StyleSheet, StatusBar, View } from 'react-native';
+
+import {createTextMessage,createImageMessage,createLocationMessage} from './utils/MessageUtils';
 import Status from './components/Status';
+import MessageList from './components/MessageList';
 
 
 export default class App extends React.Component {
 
+     state = {
+         messages:[
+
+           createImageMessage('https://unsplash.it/300/300'),
+           createLocationMessage({
+             latitude: 29.6459,
+             longitude:70.5919,
+           }),
+           createTextMessage('Check these messages'),
+           createTextMessage('Hi Nadir'),
+         ]
+      };
+
+
+  handleMessagePress = () => {}
+
   renderMessageList(){
+    const {messages} = this.state;
     return (
-         <View style={styles.content}></View>
+         <View style={styles.content}>
+            <MessageList messages={messages} onPressMessage={this.handleMessagePress} />
+         </View>
       );
    }
 
@@ -28,8 +50,7 @@ export default class App extends React.Component {
        <View style={styles.container}>
            <Status />
            {this.renderMessageList()}
-           {this.renderToolbar()}
-           {this.renderInputMethodEditor()}
+
        </View>
      );
    }

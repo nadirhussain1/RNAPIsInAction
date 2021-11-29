@@ -21,12 +21,8 @@ export default class Status extends React.Component{
 
        NetInfo.fetch().then(status => {
            const info = status.isConnected ? 'yes' : 'none';
-           console.log('NetworkStatus',"Status="+status.isConnected)
            this.setState({info});
        });
-
-
-    // setTimeout(() => this.handleChange('none'),10000);
    }
 
    componentWillUnmount(){
