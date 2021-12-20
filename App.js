@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, StatusBar, View, Alert } from 'react-native';
+import { StyleSheet, StatusBar, View, Alert,Image,TouchableHighlight } from 'react-native';
 
 import {createTextMessage,createImageMessage,createLocationMessage} from './utils/MessageUtils';
 import Status from './components/Status';
@@ -18,7 +18,9 @@ export default class App extends React.Component {
            }),
            createTextMessage('Check these messages'),
            createTextMessage('Hi Nadir'),
-         ]
+         ],
+
+         fullScreenImageId:null
       };
 
 
@@ -47,11 +49,14 @@ export default class App extends React.Component {
           );
  };
 
-  handleMessagePress = ({id, type}) => {
+  handleMessagePress = ({id, type,text,uri}) => {
      switch (type) {
        case 'text':
            this.displayDeleteAlert(id);
-         break;
+           break;
+       case 'image':
+            this.setState({fullScreenImageId:id})
+
        default:
 
      }
@@ -64,6 +69,31 @@ export default class App extends React.Component {
             <MessageList messages={messages} onPressMessage={this.handleMessagePress} />
          </View>
       );
+   }
+
+   renderFullScreenImage(){
+      if(fullScreenImageId){
+        return
+      }
+
+      const {messages,fullScreenImageId} = this.state
+      const image = messages.find( message => message.id == fullScreenImageId)
+
+      if(image==null){
+        return
+      }
+
+      const {uri} = image
+
+      return(
+        <TouchableHighlight style={styles.fullScreenOverlay} onPress={this.dismissFullScreen}>
+          <Image style={styles.fullScreenImage} source= {{uri}} />
+        </TouchableHighlight>
+      )
+   }
+
+   dismissFullScreen = () => {
+     this.setState({fullScreenImageId:null})
    }
 
    renderInputMethodEditor(){
@@ -83,6 +113,9 @@ export default class App extends React.Component {
        <View style={styles.container}>
            <Status />
            {this.renderMessageList()}
+           {this.renderToolbar()}
+           {this.renderInputMethodEditor()}
+           {this.renderFullScreenImage()}
 
        </View>
      );
@@ -111,5 +144,16 @@ const styles=StyleSheet.create({
       borderTopColor: 'rgba(0,0,0,0.04)',
       backgroundColor: 'white',
     },
+
+    fullScreenImage: {
+     flex:1,
+     resizeMode:'contain'
+   },
+
+   fullScreenOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor:'black',
+    zIndex:2,
+  },
 
   });
