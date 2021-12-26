@@ -4,6 +4,7 @@ import { StyleSheet, StatusBar, View, Alert,Image,TouchableHighlight , BackHandl
 import {createTextMessage,createImageMessage,createLocationMessage} from './utils/MessageUtils';
 import Status from './components/Status';
 import MessageList from './components/MessageList';
+import Toolbar from './components/Toolbar';
 
 
 export default class App extends React.Component {
@@ -20,7 +21,8 @@ export default class App extends React.Component {
            createTextMessage('Hi Nadir'),
          ],
 
-         fullScreenImageId:null
+         fullScreenImageId:null,
+         isInputFocused:false,
       };
 
   componentDidMount(){
@@ -72,7 +74,7 @@ export default class App extends React.Component {
            this.displayDeleteAlert(id);
            break;
        case 'image':
-            this.setState({fullScreenImageId:id})
+            this.setState({fullScreenImageId:id, isInputFocused:false})
 
        default:
 
@@ -119,9 +121,37 @@ export default class App extends React.Component {
       );
    }
 
+   handleChangeFocus = (isFocused) =>{
+     this.setState({isInputFocused:isFocused})
+   }
+
+   handleSubmit = (text) => {
+      const{messages} = this.state;
+
+      this.setState({messages:[createTextMessage(text),...messages]})
+   }
+
+   handleCameraIconPress = () =>{
+
+   }
+
+   handleLocationIconPress = () =>{
+
+   }
+
    renderToolbar() {
+     const {isInputFocused} = this.state;
+
      return (
-      <View style={styles.toolbar}></View>
+      <View style={styles.toolbar}>
+        <Toolbar
+          isFocused = {isInputFocused}
+          onChangeFocus = {this.handleChangeFocus}
+          onSubmit = {this.handleSubmit}
+          onPressCamera = {this.handleCameraIconPress}
+          onPressLocation = {this.handleLocationIconPress}
+        />
+      </View>
     );
    }
 
